@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using NodaTime;
+using System.ComponentModel.DataAnnotations;
 
 namespace WebGallery.Data.Entities;
 
-public sealed class UserProfiles
+public sealed class UserProfile
 {
     [Key]
     public Guid Id { get; set; }
@@ -19,17 +20,37 @@ public sealed class UserProfiles
 
     public string Country { get; set; }
 
-    public DateTime BirthDate { get; set; }
+    public LocalDate BirthDate { get; set; }
 
     public string Occupation { get; set; }
 
     public int TotalArtworks { get; set; }
 
-    public IList<Artworks> Artworks { get; set; }
+    public IList<Artwork> Artworks { get; set; }
 
     public int TotalFollowers { get; set; }
 
     public int TotalFollowing { get; set; }
+}
+
+public sealed class Bookmark
+{
+    [Key]
+    public Guid Id { get; set; }
+
+    public UserProfile UserProfile { get; set; }
+
+    public Artwork Artwork { get; set; }
+}
+
+public sealed class Like
+{
+    [Key]
+    public Guid Id { get; set; }
+
+    public UserProfile UserProfile { get; set; }
+
+    public Artwork Artwork { get; set; }
 }
 
 public enum Gender

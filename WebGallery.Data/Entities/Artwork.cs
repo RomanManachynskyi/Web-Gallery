@@ -1,13 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using NodaTime;
+using System.ComponentModel.DataAnnotations;
 
 namespace WebGallery.Data.Entities;
 
-public sealed class Artworks
+public sealed class Artwork
 {
     [Key]
     public Guid Id { get; set; }
 
-    public UserProfiles UserProfile { get; set; }
+    public UserProfile UserProfile { get; set; }
 
     public string CompressedFrontPictureUrl { get; set; }
 
@@ -15,7 +16,7 @@ public sealed class Artworks
 
     public string Description { get; set; }
 
-    public DateTime PublishedAt { get; set; }
+    public LocalDate PublishedAt { get; set; }
 
     public OpenTo OpenTo { get; set; }
 
@@ -29,22 +30,22 @@ public sealed class Artworks
 
     public bool TotalViews { get; set; }
 
-    public IList<Pictures> Pictures { get; set; }
+    public IList<Picture> Pictures { get; set; }
 
-    public IList<ArtworkTags> Tags { get; set; }
+    public IList<ArtworkTag> Tags { get; set; }
 }
 
-public sealed class Pictures
+public sealed class Picture
 {
     [Key]
     public Guid Id { get; set; }
 
-    public Artworks Artwork { get; set; }
+    public Artwork Artwork { get; set; }
 
     public string FullPictureUrl { get; set; }
 }
 
-public sealed class ArtworkTags
+public sealed class ArtworkTag
 {
     [Key]
     public Guid Id { get; set; }
@@ -53,7 +54,7 @@ public sealed class ArtworkTags
 
     public int TotalUses { get; set; }
 
-    public IList<Artworks> Artworks { get; set; }
+    public IList<Artwork> Artworks { get; set; }
 }
 
 public enum OpenTo
