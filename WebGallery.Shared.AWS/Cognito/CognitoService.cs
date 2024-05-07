@@ -62,6 +62,7 @@ public class CognitoService : ICognitoService
             throw new InvalidOperationException("no confirmation link is available");
 
         return confirmationLink
+            .Replace("{user_pool_domain}", _cognitoConfig.UserPoolDomain)
             .Replace("{region}", _cognitoConfig.RegionEndpoint)
             .Replace("{client_id}", _cognitoConfig.AppClientId)
             .Replace("{email}", email)
