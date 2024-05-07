@@ -71,11 +71,11 @@ namespace WebGallery.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("TotalLikes")
-                        .HasColumnType("boolean");
+                    b.Property<long>("TotalLikes")
+                        .HasColumnType("bigint");
 
-                    b.Property<bool>("TotalViews")
-                        .HasColumnType("boolean");
+                    b.Property<long>("TotalViews")
+                        .HasColumnType("bigint");
 
                     b.Property<Guid>("UserProfileId")
                         .HasColumnType("uuid");
@@ -84,7 +84,7 @@ namespace WebGallery.Data.Migrations
 
                     b.HasIndex("UserProfileId");
 
-                    b.ToTable("Artworks");
+                    b.ToTable("Artwork");
                 });
 
             modelBuilder.Entity("WebGallery.Data.Entities.ArtworkTag", b =>
@@ -97,12 +97,12 @@ namespace WebGallery.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("TotalUses")
-                        .HasColumnType("integer");
+                    b.Property<long>("TotalUses")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
-                    b.ToTable("ArtworkTags");
+                    b.ToTable("ArtworkTag");
                 });
 
             modelBuilder.Entity("WebGallery.Data.Entities.Bookmark", b =>
@@ -123,7 +123,7 @@ namespace WebGallery.Data.Migrations
 
                     b.HasIndex("UserProfileId");
 
-                    b.ToTable("Bookmarks");
+                    b.ToTable("Bookmark");
                 });
 
             modelBuilder.Entity("WebGallery.Data.Entities.Like", b =>
@@ -144,7 +144,7 @@ namespace WebGallery.Data.Migrations
 
                     b.HasIndex("UserProfileId");
 
-                    b.ToTable("Likes");
+                    b.ToTable("Like");
                 });
 
             modelBuilder.Entity("WebGallery.Data.Entities.Picture", b =>
@@ -164,7 +164,7 @@ namespace WebGallery.Data.Migrations
 
                     b.HasIndex("ArtworkId");
 
-                    b.ToTable("Pictures");
+                    b.ToTable("Picture");
                 });
 
             modelBuilder.Entity("WebGallery.Data.Entities.UserProfile", b =>
@@ -213,7 +213,7 @@ namespace WebGallery.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserProfiles");
+                    b.ToTable("UserProfile");
                 });
 
             modelBuilder.Entity("ArtworkArtworkTag", b =>

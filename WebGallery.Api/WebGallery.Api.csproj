@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>342aff5b-edf8-48cd-bcd8-ca75b4994266</UserSecretsId>
   </PropertyGroup>
@@ -27,10 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\WebGallery.Core\WebGallery.Core.csproj" />
     <ProjectReference Include="..\WebGallery.Data\WebGallery.Data.csproj" />
   </ItemGroup>
 

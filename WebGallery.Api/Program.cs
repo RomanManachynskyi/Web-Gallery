@@ -3,7 +3,10 @@ using Newtonsoft.Json;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
 using WebGallery.Api.Helpers;
+using WebGallery.Core;
+using WebGallery.Core.Service;
 using WebGallery.Data;
+using WebGallery.Data.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +19,10 @@ builder.Services.AddDbContext<DatabaseContext>(opts =>
     opts.ConfigureDatabase(builder.Configuration.GetConnectionString("Postgres")));
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddControllers();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
+builder.Services.AddScoped<IArtworksService, ArtworksService>();
+
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

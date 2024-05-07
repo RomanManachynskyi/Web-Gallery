@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WebGallery.Data;
 
@@ -12,7 +13,7 @@ using WebGallery.Data;
 namespace WebGallery.Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240502090225_CreateArtworks")]
+    [Migration("20240507002653_CreateArtworks")]
     partial class CreateArtworks
     {
         /// <inheritdoc />
@@ -25,7 +26,7 @@ namespace WebGallery.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("ArtworkTagsArtworks", b =>
+            modelBuilder.Entity("ArtworkArtworkTag", b =>
                 {
                     b.Property<Guid>("ArtworksId")
                         .HasColumnType("uuid");
@@ -37,28 +38,10 @@ namespace WebGallery.Data.Migrations
 
                     b.HasIndex("TagsId");
 
-                    b.ToTable("ArtworkTagsArtworks");
+                    b.ToTable("ArtworkArtworkTag");
                 });
 
-            modelBuilder.Entity("WebGallery.Data.Entities.ArtworkTags", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("TotalUses")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ArtworkTags");
-                });
-
-            modelBuilder.Entity("WebGallery.Data.Entities.Artworks", b =>
+            modelBuilder.Entity("WebGallery.Data.Entities.Artwork", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -84,18 +67,18 @@ namespace WebGallery.Data.Migrations
                     b.Property<int>("OpenTo")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("PublishedAt")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<LocalDate>("PublishedAt")
+                        .HasColumnType("date");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("TotalLikes")
-                        .HasColumnType("boolean");
+                    b.Property<long>("TotalLikes")
+                        .HasColumnType("bigint");
 
-                    b.Property<bool>("TotalViews")
-                        .HasColumnType("boolean");
+                    b.Property<long>("TotalViews")
+                        .HasColumnType("bigint");
 
                     b.Property<Guid>("UserProfileId")
                         .HasColumnType("uuid");
@@ -104,10 +87,70 @@ namespace WebGallery.Data.Migrations
 
                     b.HasIndex("UserProfileId");
 
-                    b.ToTable("Artworks");
+                    b.ToTable("Artwork");
                 });
 
-            modelBuilder.Entity("WebGallery.Data.Entities.Pictures", b =>
+            modelBuilder.Entity("WebGallery.Data.Entities.ArtworkTag", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("TotalUses")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ArtworkTag");
+                });
+
+            modelBuilder.Entity("WebGallery.Data.Entities.Bookmark", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ArtworkId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserProfileId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArtworkId");
+
+                    b.HasIndex("UserProfileId");
+
+                    b.ToTable("Bookmark");
+                });
+
+            modelBuilder.Entity("WebGallery.Data.Entities.Like", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ArtworkId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserProfileId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArtworkId");
+
+                    b.HasIndex("UserProfileId");
+
+                    b.ToTable("Like");
+                });
+
+            modelBuilder.Entity("WebGallery.Data.Entities.Picture", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -124,17 +167,17 @@ namespace WebGallery.Data.Migrations
 
                     b.HasIndex("ArtworkId");
 
-                    b.ToTable("Pictures");
+                    b.ToTable("Picture");
                 });
 
-            modelBuilder.Entity("WebGallery.Data.Entities.UserProfiles", b =>
+            modelBuilder.Entity("WebGallery.Data.Entities.UserProfile", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("BirthDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<LocalDate>("BirthDate")
+                        .HasColumnType("date");
 
                     b.Property<Guid>("CognitoUserId")
                         .HasColumnType("uuid");
@@ -173,27 +216,27 @@ namespace WebGallery.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserProfiles");
+                    b.ToTable("UserProfile");
                 });
 
-            modelBuilder.Entity("ArtworkTagsArtworks", b =>
+            modelBuilder.Entity("ArtworkArtworkTag", b =>
                 {
-                    b.HasOne("WebGallery.Data.Entities.Artworks", null)
+                    b.HasOne("WebGallery.Data.Entities.Artwork", null)
                         .WithMany()
                         .HasForeignKey("ArtworksId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebGallery.Data.Entities.ArtworkTags", null)
+                    b.HasOne("WebGallery.Data.Entities.ArtworkTag", null)
                         .WithMany()
                         .HasForeignKey("TagsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WebGallery.Data.Entities.Artworks", b =>
+            modelBuilder.Entity("WebGallery.Data.Entities.Artwork", b =>
                 {
-                    b.HasOne("WebGallery.Data.Entities.UserProfiles", "UserProfile")
+                    b.HasOne("WebGallery.Data.Entities.UserProfile", "UserProfile")
                         .WithMany("Artworks")
                         .HasForeignKey("UserProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -202,9 +245,47 @@ namespace WebGallery.Data.Migrations
                     b.Navigation("UserProfile");
                 });
 
-            modelBuilder.Entity("WebGallery.Data.Entities.Pictures", b =>
+            modelBuilder.Entity("WebGallery.Data.Entities.Bookmark", b =>
                 {
-                    b.HasOne("WebGallery.Data.Entities.Artworks", "Artwork")
+                    b.HasOne("WebGallery.Data.Entities.Artwork", "Artwork")
+                        .WithMany()
+                        .HasForeignKey("ArtworkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebGallery.Data.Entities.UserProfile", "UserProfile")
+                        .WithMany()
+                        .HasForeignKey("UserProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Artwork");
+
+                    b.Navigation("UserProfile");
+                });
+
+            modelBuilder.Entity("WebGallery.Data.Entities.Like", b =>
+                {
+                    b.HasOne("WebGallery.Data.Entities.Artwork", "Artwork")
+                        .WithMany()
+                        .HasForeignKey("ArtworkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebGallery.Data.Entities.UserProfile", "UserProfile")
+                        .WithMany()
+                        .HasForeignKey("UserProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Artwork");
+
+                    b.Navigation("UserProfile");
+                });
+
+            modelBuilder.Entity("WebGallery.Data.Entities.Picture", b =>
+                {
+                    b.HasOne("WebGallery.Data.Entities.Artwork", "Artwork")
                         .WithMany("Pictures")
                         .HasForeignKey("ArtworkId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -213,12 +294,12 @@ namespace WebGallery.Data.Migrations
                     b.Navigation("Artwork");
                 });
 
-            modelBuilder.Entity("WebGallery.Data.Entities.Artworks", b =>
+            modelBuilder.Entity("WebGallery.Data.Entities.Artwork", b =>
                 {
                     b.Navigation("Pictures");
                 });
 
-            modelBuilder.Entity("WebGallery.Data.Entities.UserProfiles", b =>
+            modelBuilder.Entity("WebGallery.Data.Entities.UserProfile", b =>
                 {
                     b.Navigation("Artworks");
                 });
