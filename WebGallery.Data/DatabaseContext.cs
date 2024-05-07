@@ -11,7 +11,7 @@ public class DatabaseContext : DbContext
 
     public DbSet<Artwork> Artwork { get; set; }
     public DbSet<Picture> Picture { get; set; }
-    public DbSet<ArtworkTag> ArtworkTag { get; set; }
+    public DbSet<Hashtag> Hashtag { get; set; }
 
 
     public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)

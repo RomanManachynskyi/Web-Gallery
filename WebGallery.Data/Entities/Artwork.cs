@@ -32,7 +32,7 @@ public sealed class Artwork
 
     public IList<Picture> Pictures { get; set; }
 
-    public IList<ArtworkTag> Tags { get; set; }
+    public IList<Hashtag> Hashtags { get; set; }
 }
 
 public sealed class Picture
@@ -45,7 +45,7 @@ public sealed class Picture
     public string FullPictureUrl { get; set; }
 }
 
-public sealed class ArtworkTag
+public sealed class Hashtag
 {
     [Key]
     public Guid Id { get; set; }

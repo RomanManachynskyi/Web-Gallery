@@ -28,6 +28,7 @@ public sealed class UserProfileFull
 public sealed class CreateUserProfile
 {
     public string Username { get; set; }
+    public string Email { get; set; }
     public Guid CognitoUserId { get; set; }
     public string ProfilePictureUrl { get; set; }
     public string ProfileCoverPictureUrl { get; set; }

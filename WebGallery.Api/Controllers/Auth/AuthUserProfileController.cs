@@ -16,6 +16,16 @@ public sealed class AuthUserProfileController : Controller
         this.userProfilesService = userProfilesService;
     }
 
+    [HttpGet("{userId}")]
+    [ProducesResponseType(typeof(UserProfileFull), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<UserProfileFull>> GetUserProfileById([FromRoute] Guid userId)
+    {
+        var userProfile = await userProfilesService.GetUserProfileById(userId);
+
+        return StatusCode(StatusCodes.Status200OK, userProfile);
+    }
+
     [HttpPost]
     [ProducesResponseType(typeof(UserProfileFull), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -24,5 +34,27 @@ public sealed class AuthUserProfileController : Controller
         var userProfile = await userProfilesService.CreateUserProfile(userProfileRequest);
 
         return StatusCode(StatusCodes.Status200OK, userProfile);
+    }
+
+    [HttpPut("{userId}")]
+    [ProducesResponseType(typeof(UserProfileFull), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<UserProfileFull>> UpdateUserProfile(
+        [FromRoute] Guid userId,
+        [FromBody] UpdateUserProfile userProfileRequest)
+    {
+        var userProfile = await userProfilesService.UpdateUserProfile(userId, userProfileRequest);
+
+        return StatusCode(StatusCodes.Status200OK, userProfile);
+    }
+
+    [HttpDelete("{userId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> DeleteUserProfile([FromRoute] Guid userId)
+    {
+        await userProfilesService.DeleteUserProfile(userId);
+
+        return StatusCode(StatusCodes.Status200OK);
     }
 }

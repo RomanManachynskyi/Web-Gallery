@@ -12,6 +12,7 @@ public sealed class AutoMapperProfile : Profile
             .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Username))
             .ForMember(dest => dest.ProfilePictureUrl, opt => opt.MapFrom(src => src.ProfilePictureUrl));
         CreateMap<CreateUserProfile, UserProfile>(MemberList.Destination);
+        CreateMap<UpdateUserProfile, UserProfile>(MemberList.Destination);
         CreateMap<UserProfile,   UserProfileFull>(MemberList.Destination);
 
         CreateMap<Artwork, ArtworksGeneral>()
@@ -19,10 +20,10 @@ public sealed class AutoMapperProfile : Profile
             .ForMember(dest => dest.Picture, opt => opt.MapFrom(src => src.CompressedFrontPictureUrl))
             .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-            .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags))
+            .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Hashtags))
             .ForMember(dest => dest.PublishedAt, opt => opt.MapFrom(src => src.PublishedAt));
 
-        CreateMap<ArtworkTag, ArtworkTagsGeneral>()
+        CreateMap<Hashtag, ArtworkTagsGeneral>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
 
