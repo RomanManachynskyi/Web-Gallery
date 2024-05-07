@@ -25,11 +25,9 @@ public sealed class UserProfileFull
     public uint Following { get; set; }
 }
 
-public sealed class CreateUserProfile
+public sealed class CreateMyProfile
 {
     public string Username { get; set; }
-    public string Email { get; set; }
-    public Guid CognitoUserId { get; set; }
     public string ProfilePictureUrl { get; set; }
     public string ProfileCoverPictureUrl { get; set; }
     public Gender Gender { get; set; }
@@ -38,7 +36,7 @@ public sealed class CreateUserProfile
     public string Occupation { get; set; }
 }
 
-public sealed class UpdateUserProfile
+public sealed class UpdateMyProfile
 {
     public string Username { get; set; }
     public string ProfilePictureUrl { get; set; }

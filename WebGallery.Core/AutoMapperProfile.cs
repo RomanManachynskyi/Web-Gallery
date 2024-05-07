@@ -11,8 +11,8 @@ public sealed class AutoMapperProfile : Profile
         CreateMap<UserProfile, UserProfileGeneral>()
             .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Username))
             .ForMember(dest => dest.ProfilePictureUrl, opt => opt.MapFrom(src => src.ProfilePictureUrl));
-        CreateMap<CreateUserProfile, UserProfile>(MemberList.Destination);
-        CreateMap<UpdateUserProfile, UserProfile>(MemberList.Destination);
+        CreateMap<CreateMyProfile, UserProfile>(MemberList.Destination);
+        CreateMap<UpdateMyProfile, UserProfile>(MemberList.Destination);
         CreateMap<UserProfile,   UserProfileFull>(MemberList.Destination);
 
         CreateMap<Artwork, ArtworksGeneral>()

@@ -1,27 +1,29 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WebGallery.Core.Dtos;
 using WebGallery.Core.Service;
 
 namespace WebGallery.Api.Controllers.Auth;
 
+[Authorize]
 [ApiController]
 [Tags("User Profiles")]
 [Route("api/v1/auth/user-profile")]
-public sealed class AuthUserProfileController : Controller
+public sealed class AuthMyProfileController : Controller
 {
-    public readonly IUserProfilesService userProfilesService;
+    public readonly IMyProfileService userProfilesService;
 
-    public AuthUserProfileController(IUserProfilesService userProfilesService)
+    public AuthMyProfileController(IMyProfileService userProfilesService)
     {
         this.userProfilesService = userProfilesService;
     }
 
-    [HttpGet("{userId}")]
+    [HttpGet]
     [ProducesResponseType(typeof(UserProfileFull), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<UserProfileFull>> GetUserProfileById([FromRoute] Guid userId)
+    public async Task<ActionResult<UserProfileFull>> GetUserProfileById()
     {
-        var userProfile = await userProfilesService.GetUserProfileById(userId);
+        var userProfile = await userProfilesService.GetMyProfile();
 
         return StatusCode(StatusCodes.Status200OK, userProfile);
     }
@@ -29,31 +31,29 @@ public sealed class AuthUserProfileController : Controller
     [HttpPost]
     [ProducesResponseType(typeof(UserProfileFull), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<UserProfileFull>> CreateUserProfile([FromBody] CreateUserProfile userProfileRequest)
+    public async Task<ActionResult<UserProfileFull>> CreateUserProfile([FromBody] CreateMyProfile userProfileRequest)
     {
-        var userProfile = await userProfilesService.CreateUserProfile(userProfileRequest);
+        var userProfile = await userProfilesService.CreateMyProfile(userProfileRequest);
 
         return StatusCode(StatusCodes.Status200OK, userProfile);
     }
 
-    [HttpPut("{userId}")]
+    [HttpPut]
     [ProducesResponseType(typeof(UserProfileFull), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<UserProfileFull>> UpdateUserProfile(
-        [FromRoute] Guid userId,
-        [FromBody] UpdateUserProfile userProfileRequest)
+    public async Task<ActionResult<UserProfileFull>> UpdateUserProfile([FromBody] UpdateMyProfile userProfileRequest)
     {
-        var userProfile = await userProfilesService.UpdateUserProfile(userId, userProfileRequest);
+        var userProfile = await userProfilesService.UpdateMyProfile(userProfileRequest);
 
         return StatusCode(StatusCodes.Status200OK, userProfile);
     }
 
-    [HttpDelete("{userId}")]
+    [HttpDelete]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> DeleteUserProfile([FromRoute] Guid userId)
+    public async Task<ActionResult> DeleteUserProfile()
     {
-        await userProfilesService.DeleteUserProfile(userId);
+        await userProfilesService.DeleteMyProfile();
 
         return StatusCode(StatusCodes.Status200OK);
     }
