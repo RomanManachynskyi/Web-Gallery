@@ -26,9 +26,9 @@ public sealed class Artwork
 
     public bool IsFeatured { get; set; }
 
-    public bool TotalLikes { get; set; }
+    public uint TotalLikes { get; set; }
 
-    public bool TotalViews { get; set; }
+    public uint TotalViews { get; set; }
 
     public IList<Picture> Pictures { get; set; }
 
@@ -52,7 +52,7 @@ public sealed class ArtworkTag
 
     public string Name { get; set; }
 
-    public int TotalUses { get; set; }
+    public uint TotalUses { get; set; }
 
     public IList<Artwork> Artworks { get; set; }
 }
