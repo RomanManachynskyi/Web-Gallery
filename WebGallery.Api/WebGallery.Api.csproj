@@ -28,6 +28,7 @@
   <ItemGroup>
     <ProjectReference Include="..\WebGallery.Core\WebGallery.Core.csproj" />
     <ProjectReference Include="..\WebGallery.Data\WebGallery.Data.csproj" />
+    <ProjectReference Include="..\WebGallery.Shared.AWS\WebGallery.Shared.AWS.csproj" />
   </ItemGroup>
 
 </Project>
