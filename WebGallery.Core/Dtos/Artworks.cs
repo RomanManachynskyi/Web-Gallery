@@ -13,6 +13,8 @@ public sealed class ArtworksRequest
 {
     public string Search { get; set; }
 
+    public bool? IsFeatured { get; set; }
+
     public LocalDate? PublishedFrom { get; set; }
 
     public LocalDate? PublishedTo { get; set; }

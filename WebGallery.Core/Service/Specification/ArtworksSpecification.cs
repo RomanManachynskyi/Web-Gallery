@@ -18,6 +18,7 @@ public sealed class ListArtworksSpecification : Specification<Artwork>
                             || artwork.Description.Contains(request.Search))
             .Where(artwork => string.IsNullOrEmpty(request.Search)
                             || artwork.UserProfile.Username.Contains(request.Search))
+            .Where(artwork => request.IsFeatured == null || artwork.IsFeatured == request.IsFeatured)
             .Where(artwork => request.PublishedFrom == null || artwork.PublishedAt >= request.PublishedFrom)
             .Where(artwork => request.PublishedTo == null || artwork.PublishedAt <= request.PublishedTo);
 
