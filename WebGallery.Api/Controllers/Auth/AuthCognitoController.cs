@@ -1,6 +1,10 @@
 ﻿using Amazon.CognitoIdentityProvider.Model;
 using Microsoft.AspNetCore.Mvc;
 using WebGallery.Core.Dtos;
+using WebGallery.Core.Exceptions;
+using WebGallery.Core.Service.Specification;
+using WebGallery.Data.Entities;
+using WebGallery.Data.Repositories;
 using WebGallery.Shared.AWS.Cognito;
 
 namespace WebGallery.Api.Controllers.Auth;
@@ -8,9 +12,16 @@ namespace WebGallery.Api.Controllers.Auth;
 [Route("api/v1/auth")]
 public class AuthCognitoController : Controller
 {
-    private readonly ICognitoService _cognitoService;
+    private readonly ICognitoService cognitoService;
+    private readonly IRepository<UserProfile> userProfileRepository;
 
-    public AuthCognitoController(ICognitoService cognitoService) => _cognitoService = cognitoService;
+    public AuthCognitoController(
+        ICognitoService cognitoService,
+        IRepository<UserProfile> userProfileRepository)
+    {
+        this.cognitoService = cognitoService;
+        this.userProfileRepository = userProfileRepository;
+    }
 
     [HttpPost]
     [Route("sign-in")]
@@ -20,8 +31,12 @@ public class AuthCognitoController : Controller
     {
         try
         {
-            var response = await _cognitoService.SignIn(userData);
-            return Ok(response);
+            var cognitoResponse = await cognitoService.SignIn(userData);
+
+            if (!await userProfileRepository.AnyAsync(new GetUserProfileByEmailSpecification(userData.Email)))
+                throw new NotFoundException("User profile not found");
+
+            return Ok(cognitoResponse);
         }
         catch (Exception ex)
         {
@@ -33,11 +48,11 @@ public class AuthCognitoController : Controller
     [Route("sign-up")]
     [ProducesResponseType(typeof(SignUpResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<SignUpResponse>> SignUp([FromBody] SignUp user)
+    public async Task<ActionResult<SignUpResponse>> SignUp([FromBody] SignUp userData)
     {
         try
         {
-            var response = await _cognitoService.SignUp(user);
+            var response = await cognitoService.SignUp(userData);
             return Created("User signed up successfully", response);
         }
         catch (Exception ex)
@@ -55,7 +70,7 @@ public class AuthCognitoController : Controller
     {
         try
         {
-            var resendConfirmationCodeResponse = await _cognitoService.ResendConfirmationCode(resendConfirmation);
+            var resendConfirmationCodeResponse = await cognitoService.ResendConfirmationCode(resendConfirmation);
             return Ok(resendConfirmationCodeResponse);
         }
         catch (Exception ex)
@@ -72,7 +87,7 @@ public class AuthCognitoController : Controller
     {
         try
         {
-            var confirmationLink = _cognitoService.GetConfirmationLink(confirmSignUp);
+            var confirmationLink = cognitoService.GetConfirmationLink(confirmSignUp);
             return Ok(confirmationLink);
         }
         catch (Exception ex)
