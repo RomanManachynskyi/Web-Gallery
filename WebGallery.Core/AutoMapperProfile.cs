@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using System.Linq;
 using WebGallery.Core.Dtos;
 using WebGallery.Data.Entities;
 
@@ -35,6 +36,9 @@ public sealed class AutoMapperProfile : Profile
             .ForMember(dest => dest.Pictures, opt => opt.MapFrom(src => src.Pictures))
             .ForMember(dest => dest.Hashtags, opt => opt.MapFrom(src => src.Hashtags));
         CreateMap<Like, ArtworksResponse>()
+            .ForMember(dest => dest.UserProfile, opt => opt.MapFrom(src => src.Artwork.UserProfile))
+            .ForMember(dest => dest.Artwork, opt => opt.MapFrom(src => src.Artwork));
+        CreateMap<Bookmark, ArtworksResponse>()
             .ForMember(dest => dest.UserProfile, opt => opt.MapFrom(src => src.Artwork.UserProfile))
             .ForMember(dest => dest.Artwork, opt => opt.MapFrom(src => src.Artwork));
     }

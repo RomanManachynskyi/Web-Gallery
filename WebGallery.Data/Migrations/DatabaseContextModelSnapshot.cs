@@ -35,7 +35,7 @@ namespace WebGallery.Data.Migrations
 
                     b.HasIndex("HashtagsId");
 
-                    b.ToTable("ArtworkHashtag");
+                    b.ToTable("ArtworkHashtag", (string)null);
                 });
 
             modelBuilder.Entity("WebGallery.Data.Entities.Artwork", b =>
@@ -84,7 +84,7 @@ namespace WebGallery.Data.Migrations
 
                     b.HasIndex("UserProfileId");
 
-                    b.ToTable("Artwork");
+                    b.ToTable("Artwork", (string)null);
                 });
 
             modelBuilder.Entity("WebGallery.Data.Entities.Bookmark", b =>
@@ -105,7 +105,7 @@ namespace WebGallery.Data.Migrations
 
                     b.HasIndex("UserProfileId");
 
-                    b.ToTable("Bookmark");
+                    b.ToTable("Bookmark", (string)null);
                 });
 
             modelBuilder.Entity("WebGallery.Data.Entities.Hashtag", b =>
@@ -123,7 +123,7 @@ namespace WebGallery.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Hashtag");
+                    b.ToTable("Hashtag", (string)null);
                 });
 
             modelBuilder.Entity("WebGallery.Data.Entities.Like", b =>
@@ -144,7 +144,7 @@ namespace WebGallery.Data.Migrations
 
                     b.HasIndex("UserProfileId");
 
-                    b.ToTable("Like");
+                    b.ToTable("Like", (string)null);
                 });
 
             modelBuilder.Entity("WebGallery.Data.Entities.Picture", b =>
@@ -164,7 +164,7 @@ namespace WebGallery.Data.Migrations
 
                     b.HasIndex("ArtworkId");
 
-                    b.ToTable("Picture");
+                    b.ToTable("Picture", (string)null);
                 });
 
             modelBuilder.Entity("WebGallery.Data.Entities.UserProfile", b =>
@@ -217,7 +217,7 @@ namespace WebGallery.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserProfile");
+                    b.ToTable("UserProfile", (string)null);
                 });
 
             modelBuilder.Entity("ArtworkHashtag", b =>
