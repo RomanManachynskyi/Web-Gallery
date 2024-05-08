@@ -7,7 +7,7 @@ namespace WebGallery.Api.Controllers;
 
 [Authorize]
 [ApiController]
-[Tags("Artworks")]
+[Tags("Likes")]
 [Route("api/v1/artworks/liked")]
 public class LikesController : Controller
 {
@@ -26,5 +26,15 @@ public class LikesController : Controller
         var likes = await likesService.GetLikes(likesRequest);
 
         return StatusCode(StatusCodes.Status200OK, likes);
+    }
+
+    [HttpPost("{artworkId}")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> LikeArtwork(Guid artworkId)
+    {
+        await likesService.LikeArtwork(artworkId);
+
+        return StatusCode(StatusCodes.Status201Created);
     }
 }

@@ -26,3 +26,13 @@ public sealed class ListLikesSpecification : Specification<Like>
         Query.ApplyListRequest(request.SortParameters, request.PaginationParameters);
     }
 }
+
+public sealed class GetLikeByUserProfileAndArtworkIdSpecification : Specification<Like>
+{
+    public GetLikeByUserProfileAndArtworkIdSpecification(Guid userId, Guid artworkId)
+    {
+        Query
+            .Where(likes => likes.UserProfile.Id == userId)
+            .Where(likes => likes.Artwork.Id == artworkId);
+    }
+}

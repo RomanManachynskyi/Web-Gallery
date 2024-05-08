@@ -16,14 +16,24 @@ public interface IArtworksService
 public sealed class ArtworksService : IArtworksService
 {
     private readonly IMapper mapper;
+    private readonly IUserData userData;
+
+    private readonly IRepository<Like> repository;
     private readonly IRepository<Artwork> artworkRepository;
+    private readonly IRepository<UserProfile> userProfileRepository;
 
     public ArtworksService(
         IMapper mapper,
-        IRepository<Artwork> artworkRepository)
+        IUserData userData,
+        IRepository<Like> repository,
+        IRepository<Artwork> artworkRepository,
+        IRepository<UserProfile> userProfileRepository)
     {
         this.mapper = mapper;
+        this.userData = userData;
+        this.repository = repository;
         this.artworkRepository = artworkRepository;
+        this.userProfileRepository = userProfileRepository;
     }
 
     #region Implementation
@@ -39,6 +49,9 @@ public sealed class ArtworksService : IArtworksService
 
     public async Task<ArtworkResponse> GetArtwork(Guid artworkId)
     {
+        var userProfile = await userProfileRepository.FirstOrDefaultAsync(new GetUserProfileByCognitoUserIdSpecification(userData.Id))
+            ?? throw new NotFoundException("User profile not found");
+
         var artwork = await artworkRepository.FirstOrDefaultAsync(new GetArtworkByIdWithDependenciesSpecification(artworkId))
                 ?? throw new NotFoundException("Artwork not found");
 
@@ -46,6 +59,9 @@ public sealed class ArtworksService : IArtworksService
         await artworkRepository.SaveChangesAsync();
 
         var result = mapper.Map<ArtworkResponse>(artwork);
+
+        var likes = await repository.FirstOrDefaultAsync(new GetLikeByUserProfileAndArtworkIdSpecification(userProfile.Id, artwork.Id));
+        result.IsLiked = likes is not null;
 
         return result;
     }
