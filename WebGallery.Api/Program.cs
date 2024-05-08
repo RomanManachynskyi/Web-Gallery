@@ -37,6 +37,7 @@ builder.Services.AddScoped<IS3Service, S3Service>();
 
 builder.Services.AddScoped<IMyProfileService, MyProfileService>();
 builder.Services.AddScoped<IArtworksService, ArtworksService>();
+builder.Services.AddScoped<IHashtagService, HashtagService>();
 builder.Services.AddScoped<IUserData, UserData>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
