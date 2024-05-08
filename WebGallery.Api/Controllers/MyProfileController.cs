@@ -3,17 +3,17 @@ using Microsoft.AspNetCore.Mvc;
 using WebGallery.Core.Dtos;
 using WebGallery.Core.Service;
 
-namespace WebGallery.Api.Controllers.Auth;
+namespace WebGallery.Api.Controllers;
 
 [Authorize]
 [ApiController]
 [Tags("User Profiles")]
-[Route("api/v1/auth/user-profile")]
-public sealed class AuthMyProfileController : Controller
+[Route("api/v1/user-profiles/my-profile")]
+public class MyProfileController : Controller
 {
     public readonly IMyProfileService userProfilesService;
 
-    public AuthMyProfileController(IMyProfileService userProfilesService)
+    public MyProfileController(IMyProfileService userProfilesService)
     {
         this.userProfilesService = userProfilesService;
     }
@@ -24,16 +24,6 @@ public sealed class AuthMyProfileController : Controller
     public async Task<ActionResult<UserProfileFull>> GetUserProfileById()
     {
         var userProfile = await userProfilesService.GetMyProfile();
-
-        return StatusCode(StatusCodes.Status200OK, userProfile);
-    }
-
-    [HttpPost]
-    [ProducesResponseType(typeof(UserProfileFull), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<UserProfileFull>> CreateUserProfile([FromBody] CreateMyProfile userProfileRequest)
-    {
-        var userProfile = await userProfilesService.CreateMyProfile(userProfileRequest);
 
         return StatusCode(StatusCodes.Status200OK, userProfile);
     }
