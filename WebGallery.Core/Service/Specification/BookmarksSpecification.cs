@@ -5,9 +5,9 @@ using WebGallery.Data.Entities;
 
 namespace WebGallery.Core.Service.Specification;
 
-public sealed class ListLikesSpecification : Specification<Like>
+public sealed class ListBookmarksSpecification : Specification<Bookmark>
 {
-    public ListLikesSpecification(Guid userId, LikesRequest request)
+    public ListBookmarksSpecification(Guid userId, BookmarksRequest request)
     {
         Query
             .Include(likes => likes.Artwork)
@@ -27,18 +27,18 @@ public sealed class ListLikesSpecification : Specification<Like>
     }
 }
 
-public sealed class ListAllLikesByUserProfileIdSpecification : Specification<Like>
+public sealed class ListAllBookmarksByUserProfileIdSpecification : Specification<Bookmark>
 {
-    public ListAllLikesByUserProfileIdSpecification(Guid userId)
+    public ListAllBookmarksByUserProfileIdSpecification(Guid userId)
     {
         Query
             .Where(likes => likes.UserProfile.Id == userId);
     }
 }
 
-public sealed class GetLikeByUserProfileAndArtworkIdSpecification : Specification<Like>
+public sealed class GetBookmarkByUserProfileAndArtworkIdSpecification : Specification<Bookmark>
 {
-    public GetLikeByUserProfileAndArtworkIdSpecification(Guid userId, Guid artworkId)
+    public GetBookmarkByUserProfileAndArtworkIdSpecification(Guid userId, Guid artworkId)
     {
         Query
             .Where(likes => likes.UserProfile.Id == userId)
