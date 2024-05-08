@@ -7,7 +7,7 @@ namespace WebGallery.Api.Controllers;
 
 [Authorize]
 [ApiController]
-[Tags("User Profiles")]
+[Tags("My Profile")]
 [Route("api/v1/user-profiles/my-profile")]
 public class MyProfileController : Controller
 {
