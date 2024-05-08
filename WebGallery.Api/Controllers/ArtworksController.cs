@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using WebGallery.Core.Dtos;
 using WebGallery.Core.Service;
 
 namespace WebGallery.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Tags("Artworks")]
 [Route("api/v1/artworks")]

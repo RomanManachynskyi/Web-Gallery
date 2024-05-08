@@ -11,3 +11,12 @@ public sealed class GetUserProfileByCognitoUserIdSpecification : Specification<U
             .Where(userProfile => userProfile.CognitoUserId == cognitoUserId);
     }
 }
+
+public sealed class GetUserProfileByEmailSpecification : Specification<UserProfile>
+{
+    public GetUserProfileByEmailSpecification(string email)
+    {
+        Query
+            .Where(userProfile => userProfile.Email == email);
+    }
+}

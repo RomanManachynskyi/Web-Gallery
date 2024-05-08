@@ -15,13 +15,13 @@ public interface ICognitoService
 
 public class CognitoService : ICognitoService
 {
-    private readonly ICognitoConfig _cognitoConfig;
-    private readonly IAmazonCognitoIdentityProvider _cognitoClient;
+    private readonly ICognitoConfig cognitoConfig;
+    private readonly IAmazonCognitoIdentityProvider cognitoClient;
 
     public CognitoService(ICognitoConfig cognitoConfig)
     {
-        _cognitoConfig = cognitoConfig;
-        _cognitoClient = new AmazonCognitoIdentityProviderClient(cognitoConfig.GetRegionEndpoint());
+        this.cognitoConfig = cognitoConfig;
+        cognitoClient = new AmazonCognitoIdentityProviderClient(cognitoConfig.GetRegionEndpoint());
     }
 
     #region Implementation
@@ -32,7 +32,7 @@ public class CognitoService : ICognitoService
 
         signUpRequest.SecretHash = CalculateSecretHash(signUp.Email);
 
-        return await _cognitoClient.SignUpAsync(signUpRequest);
+        return await cognitoClient.SignUpAsync(signUpRequest);
     }
 
     public async Task<InitiateAuthResponse> SignIn(SignIn signIn)
@@ -40,7 +40,7 @@ public class CognitoService : ICognitoService
         var (email, password) = signIn;
         var authRequest = CreateSignInRequest(email, password);
 
-        var response = await _cognitoClient.InitiateAuthAsync(authRequest);
+        var response = await cognitoClient.InitiateAuthAsync(authRequest);
 
         return response;
     }
@@ -48,7 +48,7 @@ public class CognitoService : ICognitoService
     public async Task<CodeDeliveryDetailsType> ResendConfirmationCode(ResendConfirmationCode resendConfirmation)
     {
         var codeRequest = CreateResendConfirmationRequest(resendConfirmation.Email);
-        var response = await _cognitoClient.ResendConfirmationCodeAsync(codeRequest);
+        var response = await cognitoClient.ResendConfirmationCodeAsync(codeRequest);
 
         return response.CodeDeliveryDetails;
     }
@@ -56,15 +56,15 @@ public class CognitoService : ICognitoService
     public string GetConfirmationLink(ConfirmSignUp confirmSignUp)
     {
         var (email, confirmationCode) = confirmSignUp;
-        var confirmationLink = _cognitoConfig.ConfirmationLink;
+        var confirmationLink = cognitoConfig.ConfirmationLink;
 
         if (string.IsNullOrEmpty(confirmationLink))
             throw new InvalidOperationException("no confirmation link is available");
 
         return confirmationLink
-            .Replace("{user_pool_domain}", _cognitoConfig.UserPoolDomain)
-            .Replace("{region}", _cognitoConfig.RegionEndpoint)
-            .Replace("{client_id}", _cognitoConfig.AppClientId)
+            .Replace("{user_pool_domain}", cognitoConfig.UserPoolDomain)
+            .Replace("{region}", cognitoConfig.RegionEndpoint)
+            .Replace("{client_id}", cognitoConfig.AppClientId)
             .Replace("{email}", email)
             .Replace("{cognito_confirmation_code}", confirmationCode);
     }
@@ -77,7 +77,7 @@ public class CognitoService : ICognitoService
     {
         return new SignUpRequest
         {
-            ClientId = _cognitoConfig.AppClientId,
+            ClientId = cognitoConfig.AppClientId,
             Username = userSignUp.Email,
             Password = userSignUp.Password,
             UserAttributes = new List<AttributeType>
@@ -89,14 +89,14 @@ public class CognitoService : ICognitoService
 
     private ResendConfirmationCodeRequest CreateResendConfirmationRequest(string email) => new()
     {
-        ClientId = _cognitoConfig.AppClientId,
+        ClientId = cognitoConfig.AppClientId,
         Username = email,
         SecretHash = CalculateSecretHash(email)
     };
 
     private InitiateAuthRequest CreateSignInRequest(string email, string password) => new()
     {
-        ClientId = _cognitoConfig.AppClientId,
+        ClientId = cognitoConfig.AppClientId,
         AuthParameters = CreateAuthParameters(email, password),
         AuthFlow = AuthFlowType.USER_PASSWORD_AUTH
     };
@@ -115,9 +115,9 @@ public class CognitoService : ICognitoService
 
     private string CalculateSecretHash(string username)
     {
-        var data = username + _cognitoConfig.AppClientId;
+        var data = username + cognitoConfig.AppClientId;
 
-        using var sha256 = new HMACSHA256(Encoding.UTF8.GetBytes(_cognitoConfig.AppClientSecret));
+        using var sha256 = new HMACSHA256(Encoding.UTF8.GetBytes(cognitoConfig.AppClientSecret));
         var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(data));
         return Convert.ToBase64String(hashBytes);
     }
