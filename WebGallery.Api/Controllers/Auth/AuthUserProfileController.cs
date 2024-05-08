@@ -7,7 +7,7 @@ namespace WebGallery.Api.Controllers.Auth;
 
 [Authorize]
 [ApiController]
-[Tags("User Profiles")]
+[Tags("Authorization/User Profiles")]
 [Route("api/v1/auth/sign-up/user-profile")]
 public sealed class AuthUserProfileController : Controller
 {

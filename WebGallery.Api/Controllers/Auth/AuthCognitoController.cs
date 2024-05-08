@@ -9,6 +9,8 @@ using WebGallery.Shared.AWS.Cognito;
 
 namespace WebGallery.Api.Controllers.Auth;
 
+[ApiController]
+[Tags("Authorization/User")]
 [Route("api/v1/auth")]
 public class AuthCognitoController : Controller
 {
