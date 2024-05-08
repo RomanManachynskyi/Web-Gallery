@@ -11,7 +11,7 @@ public sealed class ListArtworksSpecification : Specification<Artwork>
     {
         Query
             .Include(artwork => artwork.UserProfile)
-            .Include(artwork => artwork.Tags)
+            .Include(artwork => artwork.Hashtags)
             .Where(artwork => string.IsNullOrEmpty(request.Search)
                             || artwork.Title.Contains(request.Search))
             .Where(artwork => string.IsNullOrEmpty(request.Search)
