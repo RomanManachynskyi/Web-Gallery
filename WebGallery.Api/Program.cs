@@ -38,6 +38,7 @@ builder.Services.AddScoped<IS3Service, S3Service>();
 builder.Services.AddScoped<IUserProfilesService, UserProfilesService>();
 builder.Services.AddScoped<IMyProfileService, MyProfileService>();
 builder.Services.AddScoped<IArtworksService, ArtworksService>();
+builder.Services.AddScoped<IHashtagService, HashtagService>();
 builder.Services.AddScoped<ILikesService, LikesService>();
 builder.Services.AddScoped<IBookmarksService, BookmarksService>();
 builder.Services.AddScoped<IUserData, UserData>();

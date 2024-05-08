@@ -28,6 +28,7 @@ public sealed class AutoMapperProfile : Profile
         CreateMap<Hashtag, ArtworkTagsGeneral>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
+        CreateMap<Hashtag, HashtagResponse>(MemberList.Destination);
 
         CreateMap<Artwork, ArtworksResponse>()
             .ForMember(dest => dest.UserProfile, opt => opt.MapFrom(src => src.UserProfile))
