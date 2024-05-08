@@ -5,6 +5,17 @@ using WebGallery.Data.Entities;
 
 namespace WebGallery.Core.Service.Specification;
 
+public sealed class GetArtworkByIdWithDependenciesSpecification : Specification<Artwork>
+{
+    public GetArtworkByIdWithDependenciesSpecification(Guid artworkId)
+    {
+        Query
+            .Include(artwork => artwork.Pictures)
+            .Include(artwork => artwork.Hashtags)
+            .Where(artwork => artwork.Id == artworkId);
+    }
+}
+
 public sealed class ListArtworksSpecification : Specification<Artwork>
 {
     public ListArtworksSpecification(ArtworksRequest request)
