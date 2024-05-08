@@ -7,13 +7,13 @@ using WebGallery.Data.Repositories;
 
 namespace WebGallery.Core.Service;
 
-public interface IArtworksService
+public interface IBookmarksService
 {
-    Task<List<ArtworksResponse>> GetArtworks(ArtworksRequest artworksRequest);
-    Task<ArtworkResponse> GetArtwork(Guid artworkId);
+    Task<List<ArtworksResponse>> GetBookmarks(BookmarksRequest bookmarksRequest);
+    Task BookmarkArtwork(Guid artworkId);
 }
 
-public sealed class ArtworksService : IArtworksService
+public sealed class BookmarksService : IBookmarksService
 {
     private readonly IMapper mapper;
     private readonly IUserData userData;
@@ -23,7 +23,7 @@ public sealed class ArtworksService : IArtworksService
     private readonly IRepository<Artwork> artworkRepository;
     private readonly IRepository<UserProfile> userProfileRepository;
 
-    public ArtworksService(
+    public BookmarksService(
         IMapper mapper,
         IUserData userData,
         IRepository<Like> likeRepository,
@@ -33,6 +33,7 @@ public sealed class ArtworksService : IArtworksService
     {
         this.mapper = mapper;
         this.userData = userData;
+
         this.likeRepository = likeRepository;
         this.bookmarkRepository = bookmarkRepository;
         this.artworkRepository = artworkRepository;
@@ -41,22 +42,21 @@ public sealed class ArtworksService : IArtworksService
 
     #region Implementation
 
-    public async Task<List<ArtworksResponse>> GetArtworks(ArtworksRequest artworksRequest)
+    public async Task<List<ArtworksResponse>> GetBookmarks(BookmarksRequest bookmarksRequest)
     {
         var userProfile = await userProfileRepository.FirstOrDefaultAsync(new GetUserProfileByCognitoUserIdSpecification(userData.Id))
             ?? throw new NotFoundException("User profile not found");
 
-        var artworks = await artworkRepository.ListAsync(new ListArtworksSpecification(artworksRequest));
         var likes = await likeRepository.ListAsync(new ListAllLikesByUserProfileIdSpecification(userProfile.Id));
-        var bookmarks = await bookmarkRepository.ListAsync(new ListAllBookmarksByUserProfileIdSpecification(userProfile.Id));
+        var bookmarks = await bookmarkRepository.ListAsync(new ListBookmarksSpecification(userProfile.Id, bookmarksRequest));
 
         var result = new List<ArtworksResponse>();
 
-        foreach (var artwork in artworks)
+        foreach (var bookmark in bookmarks)
         {
-            var artworkResponse = mapper.Map<ArtworksResponse>(artwork);
+            var artworkResponse = mapper.Map<ArtworksResponse>(bookmark.Artwork);
             artworkResponse.Artwork.IsLiked = likes.Any(like => like.Artwork.Id == artworkResponse.Artwork.Id);
-            artworkResponse.Artwork.IsBookmarked = bookmarks.Any(bookmark => bookmark.Artwork.Id == artworkResponse.Artwork.Id);
+            artworkResponse.Artwork.IsBookmarked = true;
 
             result.Add(artworkResponse);
         }
@@ -64,23 +64,28 @@ public sealed class ArtworksService : IArtworksService
         return result;
     }
 
-    public async Task<ArtworkResponse> GetArtwork(Guid artworkId)
+    public async Task BookmarkArtwork(Guid artworkId)
     {
         var userProfile = await userProfileRepository.FirstOrDefaultAsync(new GetUserProfileByCognitoUserIdSpecification(userData.Id))
             ?? throw new NotFoundException("User profile not found");
 
-        var artwork = await artworkRepository.FirstOrDefaultAsync(new GetArtworkByIdWithDependenciesSpecification(artworkId))
-                ?? throw new NotFoundException("Artwork not found");
+        var bookmark = await bookmarkRepository.FirstOrDefaultAsync(new GetBookmarkByUserProfileAndArtworkIdSpecification(userProfile.Id, artworkId));
+        var artwork = await artworkRepository.GetByIdAsync(artworkId);
 
-        artwork.TotalViews++;
-        await artworkRepository.SaveChangesAsync();
+        if (bookmark is not null)
+            await bookmarkRepository.DeleteAsync(bookmark);
+        else
+        {
+            bookmark = new Bookmark
+            {
+                UserProfile = userProfile,
+                Artwork = artwork
+            };
 
-        var result = mapper.Map<ArtworkResponse>(artwork);
+            await bookmarkRepository.AddAsync(bookmark);
+        }
 
-        var likes = await likeRepository.FirstOrDefaultAsync(new GetLikeByUserProfileAndArtworkIdSpecification(userProfile.Id, artwork.Id));
-        result.IsLiked = likes is not null;
-
-        return result;
+        await bookmarkRepository.SaveChangesAsync();
     }
 
     #endregion

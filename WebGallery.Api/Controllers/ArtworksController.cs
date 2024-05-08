@@ -29,4 +29,15 @@ public sealed class ArtworksController : Controller
 
         return StatusCode(StatusCodes.Status200OK, artworks);
     }
+
+    [HttpGet("{artworkId}")]
+    [ProducesResponseType(typeof(ArtworkResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<ArtworkResponse>> GetArtwork(
+               [FromRoute][Required] Guid artworkId)
+    {
+        var artwork = await artworksService.GetArtwork(artworkId);
+
+        return StatusCode(StatusCodes.Status200OK, artwork);
+    }
 }

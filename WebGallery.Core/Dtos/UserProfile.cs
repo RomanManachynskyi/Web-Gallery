@@ -25,6 +25,13 @@ public sealed class UserProfileFull
     public uint Following { get; set; }
 }
 
+public sealed class UserProfilesRequest
+{
+    public string Search { get; set; }
+    public SortParameters SortParameters { get; set; }
+    public PaginationParameters PaginationParameters { get; set; }
+}
+
 public sealed class CreateMyProfile
 {
     public string Username { get; set; }

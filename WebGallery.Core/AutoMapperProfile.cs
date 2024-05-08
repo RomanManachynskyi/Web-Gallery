@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using System.Linq;
 using WebGallery.Core.Dtos;
 using WebGallery.Data.Entities;
 
@@ -23,6 +24,7 @@ public sealed class AutoMapperProfile : Profile
             .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Hashtags))
             .ForMember(dest => dest.PublishedAt, opt => opt.MapFrom(src => src.PublishedAt));
 
+        CreateMap<Picture, PictureResponse>(MemberList.Destination);
         CreateMap<Hashtag, ArtworkTagsGeneral>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
@@ -31,5 +33,14 @@ public sealed class AutoMapperProfile : Profile
         CreateMap<Artwork, ArtworksResponse>()
             .ForMember(dest => dest.UserProfile, opt => opt.MapFrom(src => src.UserProfile))
             .ForMember(dest => dest.Artwork, opt => opt.MapFrom(src => src));
+        CreateMap<Artwork, ArtworkResponse>(MemberList.Destination)
+            .ForMember(dest => dest.Pictures, opt => opt.MapFrom(src => src.Pictures))
+            .ForMember(dest => dest.Hashtags, opt => opt.MapFrom(src => src.Hashtags));
+        CreateMap<Like, ArtworksResponse>()
+            .ForMember(dest => dest.UserProfile, opt => opt.MapFrom(src => src.Artwork.UserProfile))
+            .ForMember(dest => dest.Artwork, opt => opt.MapFrom(src => src.Artwork));
+        CreateMap<Bookmark, ArtworksResponse>()
+            .ForMember(dest => dest.UserProfile, opt => opt.MapFrom(src => src.Artwork.UserProfile))
+            .ForMember(dest => dest.Artwork, opt => opt.MapFrom(src => src.Artwork));
     }
 }
