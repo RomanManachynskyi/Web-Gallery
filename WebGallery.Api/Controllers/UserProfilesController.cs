@@ -28,4 +28,14 @@ public class UserProfilesController : Controller
 
         return StatusCode(StatusCodes.Status200OK, userProfile);
     }
+
+    [HttpGet("{userProfileId}")]
+    [ProducesResponseType(typeof(UserProfileFull), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<UserProfileFull>> GetUserProfileById([FromRoute] Guid userProfileId)
+    {
+        var userProfile = await userProfilesService.GetUserProfile(userProfileId);
+
+        return StatusCode(StatusCodes.Status200OK, userProfile);
+    }
 }
