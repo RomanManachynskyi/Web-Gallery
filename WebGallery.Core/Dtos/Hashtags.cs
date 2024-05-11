@@ -9,9 +9,16 @@ public sealed class HashtagRequest
     public PaginationParameters PaginationParameters { get; set; }
 }
 
-public sealed class HashtagResponse
+public sealed class HashtagFull
 {
     public Guid Id { get; set; }
     public string Name { get; set; }
     public uint TotalUses { get; set; }
+}
+
+public sealed class HashtagsGeneral
+{
+    public Guid Id { get; set; }
+
+    public string Name { get; set; }
 }

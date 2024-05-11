@@ -8,7 +8,7 @@ namespace WebGallery.Core.Service;
 
 public interface IHashtagService
 {
-    Task<List<HashtagResponse>> GetHashtags(HashtagRequest hashtagsRequest);
+    Task<List<HashtagFull>> GetHashtags(HashtagRequest hashtagsRequest);
 }
 
 public sealed class HashtagService : IHashtagService
@@ -26,11 +26,11 @@ public sealed class HashtagService : IHashtagService
 
     #region Implementation
 
-    public async Task<List<HashtagResponse>> GetHashtags(HashtagRequest hashtagsRequest)
+    public async Task<List<HashtagFull>> GetHashtags(HashtagRequest hashtagsRequest)
     {
         var hashtags = await hashtagRepository.ListAsync(new ListHashtagSpecification(hashtagsRequest));
 
-        var result = mapper.Map<List<HashtagResponse>>(hashtags);
+        var result = mapper.Map<List<HashtagFull>>(hashtags);
 
         return result;
     }
