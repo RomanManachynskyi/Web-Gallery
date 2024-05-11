@@ -20,9 +20,9 @@ public class HashtagsController : Controller
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(List<HashtagResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<HashtagFull>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<List<HashtagResponse>>> GetHashtags(
+    public async Task<ActionResult<List<HashtagFull>>> GetHashtags(
         [FromQuery][Required] HashtagRequest request)
     {
         var hashtags = await hashtagService.GetHashtags(request);

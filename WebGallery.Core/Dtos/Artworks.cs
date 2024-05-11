@@ -19,7 +19,7 @@ public sealed class ArtworkResponse
 
     public string Description { get; set; }
 
-    public IList<ArtworkTagsGeneral> Hashtags { get; set; }
+    public IList<HashtagsGeneral> Hashtags { get; set; }
 
     public LocalDate PublishedAt { get; set; }
 
@@ -64,20 +64,13 @@ public sealed class ArtworksGeneral
 
     public string Description { get; set; }
 
-    public IList<ArtworkTagsGeneral> Tags { get; set; }
+    public IList<HashtagsGeneral> Hashtags { get; set; }
 
     public LocalDate PublishedAt { get; set; }
 
     public bool IsLiked { get; set; }
 
     public bool IsBookmarked { get; set; }
-}
-
-public sealed class ArtworkTagsGeneral
-{
-    public Guid Id { get; set; }
-
-    public string Name { get; set; }
 }
 
 public sealed class PictureResponse
