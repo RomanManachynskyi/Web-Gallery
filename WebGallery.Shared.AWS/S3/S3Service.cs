@@ -1,14 +1,15 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
+using Microsoft.AspNetCore.Http;
 using WebGallery.Shared.AWS.IAM;
 
 namespace WebGallery.Shared.AWS.S3;
 
 public interface IS3Service
 {
-    Task<string> ProcessFile(string folderPath, string fileName);
-    Task<List<string>> ProcessFolder(string path, int limit, int offset);
-    Task PublishFile(string path, string? content);
+    Task PublishFile(string fileName, string path, IFormFile content);
+    Task PublishFile(string fileName, string path, Stream stream, string contentType);
+    Task DeleteFile(string path, string name);
 }
 
 public sealed class S3Service : IS3Service
@@ -25,45 +26,46 @@ public sealed class S3Service : IS3Service
 
     #region Implementation
 
-    public async Task<string> ProcessFile(string folderPath, string fileName)
+    public async Task PublishFile(string fileName, string path, IFormFile file)
     {
-        var filePath = $"{folderPath}/{fileName}";
-        var content = await ProcessFile(filePath);
+        using var memoryStream = new MemoryStream();
+        await file.CopyToAsync(memoryStream);
 
-        return content;
-    }
+        memoryStream.Position = 0;
 
-    public async Task<List<string>> ProcessFolder(string path, int limit, int offset)
-    {
-        var request = new ListObjectsV2Request { BucketName = _s3Config.BucketName, Prefix = $"{path}/" };
-
-        var response = await _s3Client.ListObjectsV2Async(request);
-        var jsonFiles = new List<string>();
-        var filesProcessed = 0;
-
-        var objectsToProcess = response.S3Objects
-            .Where(s3object => !ShouldSkipObject(s3object, ref filesProcessed, ref offset, limit));
-
-        foreach (var s3Object in objectsToProcess)
+        var putObjectRequest = new PutObjectRequest
         {
-            var content = await ProcessFile(s3Object.Key);
-            jsonFiles.Add(content);
-        }
+            BucketName = _s3Config.BucketName,
+            Key = $"{path}/{fileName}",
+            InputStream = memoryStream,
+            ContentType = file.ContentType
+        };
 
-        return jsonFiles;
+        await _s3Client.PutObjectAsync(putObjectRequest);
     }
 
-    public async Task PublishFile(string path, string? content)
+    public async Task PublishFile(string fileName, string path, Stream stream, string contentType)
     {
         var putObjectRequest = new PutObjectRequest
         {
             BucketName = _s3Config.BucketName,
-            Key = path,
-            ContentBody = content,
-            ContentType = "application/json"
+            Key = $"{path}/{fileName}",
+            InputStream = stream,
+            ContentType = contentType
         };
 
         await _s3Client.PutObjectAsync(putObjectRequest);
+    }
+
+    public async Task DeleteFile(string path, string name)
+    {
+        var deleteObjectRequest = new DeleteObjectRequest
+        {
+            BucketName = _s3Config.BucketName,
+            Key = $"{path}/{name}"
+        };
+
+        await _s3Client.DeleteObjectAsync(deleteObjectRequest);
     }
 
     #endregion

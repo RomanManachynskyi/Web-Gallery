@@ -13,8 +13,8 @@ using WebGallery.Data;
 namespace WebGallery.Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240507212518_AddEmailFieldRenameHashtag")]
-    partial class AddEmailFieldRenameHashtag
+    [Migration("20240512221017_ArtworksAndHashtagsUpdate")]
+    partial class ArtworksAndHashtagsUpdate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,12 +50,11 @@ namespace WebGallery.Data.Migrations
                     b.Property<bool>("AllowComments")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("CompressedFrontPictureUrl")
+                    b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
+                    b.Property<string>("FrontPictureUrl")
                         .HasColumnType("text");
 
                     b.Property<bool>("IsFeatured")

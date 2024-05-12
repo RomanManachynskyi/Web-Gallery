@@ -14,7 +14,13 @@ public sealed class AutoMapperProfile : Profile
         CreateMap<UpdateMyProfile, UserProfile>(MemberList.Destination);
 
         CreateMap<Artwork, ArtworksGeneral>(MemberList.Destination)
-            .ForMember(dest => dest.Picture, opt => opt.MapFrom(src => src.CompressedFrontPictureUrl));
+            .ForMember(dest => dest.Picture, opt => opt.MapFrom(src => src.FrontPictureUrl));
+        CreateMap<Artwork, MyArtworkGeneral>(MemberList.Destination)
+            .ForMember(dest => dest.Picture, opt => opt.MapFrom(src => src.FrontPictureUrl));
+        CreateMap<Artwork, MyArtworkFull>(MemberList.Destination);
+        CreateMap<CreateArtwork, Artwork>(MemberList.Destination)
+            .ForMember(dest => dest.Pictures, opt => opt.Ignore())
+            .ForMember(dest => dest.Hashtags, opt => opt.Ignore());
 
         CreateMap<Picture, PictureResponse>(MemberList.Destination);
         CreateMap<Hashtag, HashtagsGeneral>(MemberList.Destination);
