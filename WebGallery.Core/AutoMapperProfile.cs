@@ -15,6 +15,9 @@ public sealed class AutoMapperProfile : Profile
 
         CreateMap<Artwork, ArtworksGeneral>(MemberList.Destination)
             .ForMember(dest => dest.Picture, opt => opt.MapFrom(src => src.CompressedFrontPictureUrl));
+        CreateMap<Artwork, MyArtworkGeneral>(MemberList.Destination)
+            .ForMember(dest => dest.Picture, opt => opt.MapFrom(src => src.CompressedFrontPictureUrl));
+        CreateMap<Artwork, MyArtworkFull>(MemberList.Destination);
 
         CreateMap<Picture, PictureResponse>(MemberList.Destination);
         CreateMap<Hashtag, HashtagsGeneral>(MemberList.Destination);

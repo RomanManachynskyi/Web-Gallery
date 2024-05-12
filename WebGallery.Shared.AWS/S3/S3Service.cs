@@ -53,7 +53,7 @@ public sealed class S3Service : IS3Service
         return jsonFiles;
     }
 
-    public async Task PublishFile(string path, string? content)
+    public async Task PublishFile(string path, string content)
     {
         var putObjectRequest = new PutObjectRequest
         {
