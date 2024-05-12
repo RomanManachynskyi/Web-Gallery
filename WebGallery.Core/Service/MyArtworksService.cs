@@ -18,6 +18,7 @@ public interface IMyArtworksService
     Task<List<MyArtworkGeneral>> GetMyArtworks(GetMyArtworks request);
     Task<MyArtworkFull> GetMyArtwork(Guid artworkId);
     Task<MyArtworkFull> CreateMyArtwork(CreateArtwork request);
+    Task<MyArtworkFull> UpdateMyArtwork(Guid artworkId, UpdateArtwork request);
     Task DeleteMyArtwork(Guid artworkId);
 }
 
@@ -120,6 +121,38 @@ public sealed class MyArtworksService : IMyArtworksService
         artwork.Hashtags = await AddHashtags(request.Hashtags, artwork);
         artwork.Pictures = await UploadPictures(userProfile.Id, request.Pictures, artwork);
         artwork.FrontPictureUrl = await CompressPicture(request.Pictures.First(), artwork.Id, userProfile.Id);
+
+        await artworkRepository.UpdateAsync(artwork);
+        await artworkRepository.SaveChangesAsync();
+
+        var result = mapper.Map<MyArtworkFull>(artwork);
+
+        return result;
+    }
+
+    public async Task<MyArtworkFull> UpdateMyArtwork(Guid artworkId, UpdateArtwork request)
+    {
+        var userProfile = await userProfileRepository.FirstOrDefaultAsync(new GetUserProfileByCognitoUserIdSpecification(userData.Id))
+            ?? throw new NotFoundException("User profile not found");
+        var artwork = await artworkRepository.FirstOrDefaultAsync(new GetMyArtworkByIdWithDependenciesSpecification(userProfile.Id, artworkId))
+            ?? throw new NotFoundException("Artwork not found");
+
+        artwork.Title = request.Title;
+        artwork.Description = request.Description;
+        artwork.OpenTo = request.OpenTo;
+        artwork.AllowComments = request.AllowComments;
+        artwork.IsOriginalWork = request.IsOriginalWork;
+        artwork.IsFeatured = request.IsFeatured;
+
+        if (request.Pictures is not null && request.Pictures.Count > 0)
+        {
+            await DeletePictures(artwork.FrontPictureUrl, artwork.Pictures);
+
+            artwork.Pictures = await UploadPictures(userProfile.Id, request.Pictures, artwork);
+            artwork.FrontPictureUrl = await CompressPicture(request.Pictures.First(), artwork.Id, userProfile.Id);
+        }
+
+        artwork.Hashtags = await AddHashtags(request.Hashtags, artwork);
 
         await artworkRepository.UpdateAsync(artwork);
         await artworkRepository.SaveChangesAsync();

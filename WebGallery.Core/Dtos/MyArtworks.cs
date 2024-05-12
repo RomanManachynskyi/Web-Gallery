@@ -55,3 +55,15 @@ public sealed class CreateArtwork
     public bool IsOriginalWork { get; set; }
     public bool IsFeatured { get; set; }
 }
+
+public sealed class UpdateArtwork
+{
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public IList<IFormFile> Pictures { get; set; }
+    public IList<string> Hashtags { get; set; }
+    public OpenTo OpenTo { get; set; }
+    public bool AllowComments { get; set; }
+    public bool IsOriginalWork { get; set; }
+    public bool IsFeatured { get; set; }
+}

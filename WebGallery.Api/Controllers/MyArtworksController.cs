@@ -52,6 +52,18 @@ public class MyArtworksController : Controller
         return StatusCode(StatusCodes.Status201Created, myArtwork);
     }
 
+    [HttpPut("{artworkId}")]
+    [ProducesResponseType(typeof(MyArtworkFull), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<MyArtworkFull>> UpdateMyArtwork(
+        [FromRoute][Required] Guid artworkId,
+        [FromForm][Required] UpdateArtwork request)
+    {
+        var myArtwork = await myArtworksService.UpdateMyArtwork(artworkId, request);
+
+        return StatusCode(StatusCodes.Status200OK, myArtwork);
+    }
+
     [HttpDelete("{artworkId}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
