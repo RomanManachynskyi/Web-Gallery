@@ -7,10 +7,9 @@ namespace WebGallery.Shared.AWS.S3;
 
 public interface IS3Service
 {
-    Task<string> ProcessFile(string folderPath, string fileName);
-    Task<List<string>> ProcessFolder(string path, int limit, int offset);
     Task PublishFile(string fileName, string path, IFormFile content);
     Task PublishFile(string fileName, string path, Stream stream, string contentType);
+    Task DeleteFile(string path, string name);
 }
 
 public sealed class S3Service : IS3Service
@@ -26,34 +25,6 @@ public sealed class S3Service : IS3Service
     }
 
     #region Implementation
-
-    public async Task<string> ProcessFile(string folderPath, string fileName)
-    {
-        var filePath = $"{folderPath}/{fileName}";
-        var content = await ProcessFile(filePath);
-
-        return content;
-    }
-
-    public async Task<List<string>> ProcessFolder(string path, int limit, int offset)
-    {
-        var request = new ListObjectsV2Request { BucketName = _s3Config.BucketName, Prefix = $"{path}/" };
-
-        var response = await _s3Client.ListObjectsV2Async(request);
-        var jsonFiles = new List<string>();
-        var filesProcessed = 0;
-
-        var objectsToProcess = response.S3Objects
-            .Where(s3object => !ShouldSkipObject(s3object, ref filesProcessed, ref offset, limit));
-
-        foreach (var s3Object in objectsToProcess)
-        {
-            var content = await ProcessFile(s3Object.Key);
-            jsonFiles.Add(content);
-        }
-
-        return jsonFiles;
-    }
 
     public async Task PublishFile(string fileName, string path, IFormFile file)
     {
@@ -84,6 +55,17 @@ public sealed class S3Service : IS3Service
         };
 
         await _s3Client.PutObjectAsync(putObjectRequest);
+    }
+
+    public async Task DeleteFile(string path, string name)
+    {
+        var deleteObjectRequest = new DeleteObjectRequest
+        {
+            BucketName = _s3Config.BucketName,
+            Key = $"{path}/{name}"
+        };
+
+        await _s3Client.DeleteObjectAsync(deleteObjectRequest);
     }
 
     #endregion

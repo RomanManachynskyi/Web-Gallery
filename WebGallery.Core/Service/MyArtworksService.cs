@@ -18,6 +18,7 @@ public interface IMyArtworksService
     Task<List<MyArtworkGeneral>> GetMyArtworks(GetMyArtworks request);
     Task<MyArtworkFull> GetMyArtwork(Guid artworkId);
     Task<MyArtworkFull> CreateMyArtwork(CreateArtwork request);
+    Task DeleteMyArtwork(Guid artworkId);
 }
 
 public sealed class MyArtworksService : IMyArtworksService
@@ -128,6 +129,21 @@ public sealed class MyArtworksService : IMyArtworksService
         return result;
     }
 
+    public async Task DeleteMyArtwork(Guid artworkId)
+    {
+        var userProfile = await userProfileRepository.FirstOrDefaultAsync(new GetUserProfileByCognitoUserIdSpecification(userData.Id))
+            ?? throw new NotFoundException("User profile not found");
+
+        var artwork = await artworkRepository.FirstOrDefaultAsync(new GetMyArtworkByIdWithDependenciesSpecification(userProfile.Id, artworkId))
+            ?? throw new NotFoundException("Artwork not found");
+
+        await RemoveHashtags(artwork.Hashtags);
+        await DeletePictures(artwork.FrontPictureUrl, artwork.Pictures);
+
+        await artworkRepository.DeleteAsync(artwork);
+        await artworkRepository.SaveChangesAsync();
+    }
+
     #endregion
 
 
@@ -152,6 +168,17 @@ public sealed class MyArtworksService : IMyArtworksService
         }
 
         return result;
+    }
+
+    private async Task RemoveHashtags(IList<Hashtag> hashtags)
+    {
+        foreach (var hashtag in hashtags)
+        {
+            hashtag.TotalUses--;
+
+            if (hashtag.TotalUses == 0)
+                await hashtagRepository.DeleteAsync(hashtag);
+        }
     }
 
     private async Task<string> CompressPicture(IFormFile picture, Guid artworkId, Guid userProfileId)
@@ -191,6 +218,20 @@ public sealed class MyArtworksService : IMyArtworksService
         }
 
         return result;
+    }
+
+    private async Task DeletePictures(string frontpicture, IList<Picture> pictures)
+    {
+        var pictureUrls = pictures.Select(picture => picture.FullPictureUrl).ToList();
+        pictureUrls.Add(frontpicture);
+
+        foreach (var pictureUrl in pictureUrls)
+        {
+            var fileName = pictureUrl.Split('/').Last();
+            var filePath = pictureUrl.Replace(PictureBucket, string.Empty).Replace(fileName, string.Empty).Trim('/');
+
+            await s3Service.DeleteFile(filePath, fileName);
+        }
     }
 
     #endregion

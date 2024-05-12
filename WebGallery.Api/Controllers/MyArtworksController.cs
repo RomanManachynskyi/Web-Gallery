@@ -51,4 +51,15 @@ public class MyArtworksController : Controller
 
         return StatusCode(StatusCodes.Status201Created, myArtwork);
     }
+
+    [HttpDelete("{artworkId}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> DeleteMyArtwork(
+               [FromRoute][Required] Guid artworkId)
+    {
+        await myArtworksService.DeleteMyArtwork(artworkId);
+
+        return StatusCode(StatusCodes.Status204NoContent);
+    }
 }
