@@ -5,6 +5,16 @@ using WebGallery.Data.Entities;
 
 namespace WebGallery.Core.Service.Specification;
 
+public sealed class GetHashtagByNameSpecification : Specification<Hashtag>
+{
+    public GetHashtagByNameSpecification(string name)
+    {
+        Query
+            .Include(hashtag => hashtag.Artworks)
+            .Where(hashtag => hashtag.Name == name);
+    }
+}
+
 public sealed class ListHashtagSpecification : Specification<Hashtag>
 {
     public ListHashtagSpecification(HashtagRequest request)

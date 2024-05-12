@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebGallery.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddEmailFieldRenameHashtag : Migration
+    public partial class ArtworksAndHashtagsUpdate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,12 +17,22 @@ namespace WebGallery.Data.Migrations
             migrationBuilder.DropTable(
                 name: "ArtworkTag");
 
+            migrationBuilder.DropColumn(
+                name: "CompressedFrontPictureUrl",
+                table: "Artwork");
+
             migrationBuilder.AddColumn<string>(
                 name: "Email",
                 table: "UserProfile",
                 type: "text",
                 nullable: false,
                 defaultValue: "");
+
+            migrationBuilder.AddColumn<string>(
+                name: "FrontPictureUrl",
+                table: "Artwork",
+                type: "text",
+                nullable: true);
 
             migrationBuilder.CreateTable(
                 name: "Hashtag",
@@ -79,6 +89,17 @@ namespace WebGallery.Data.Migrations
             migrationBuilder.DropColumn(
                 name: "Email",
                 table: "UserProfile");
+
+            migrationBuilder.DropColumn(
+                name: "FrontPictureUrl",
+                table: "Artwork");
+
+            migrationBuilder.AddColumn<string>(
+                name: "CompressedFrontPictureUrl",
+                table: "Artwork",
+                type: "text",
+                nullable: false,
+                defaultValue: "");
 
             migrationBuilder.CreateTable(
                 name: "ArtworkTag",

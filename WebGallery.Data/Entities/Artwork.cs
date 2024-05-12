@@ -10,7 +10,7 @@ public sealed class Artwork
 
     public UserProfile UserProfile { get; set; }
 
-    public string CompressedFrontPictureUrl { get; set; }
+    public string? FrontPictureUrl { get; set; }
 
     public string Title { get; set; }
 

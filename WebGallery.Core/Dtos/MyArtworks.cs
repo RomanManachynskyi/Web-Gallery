@@ -1,4 +1,5 @@
-﻿using NodaTime;
+﻿using Microsoft.AspNetCore.Http;
+using NodaTime;
 using WebGallery.Data.Entities;
 
 namespace WebGallery.Core.Dtos;
@@ -47,9 +48,10 @@ public sealed class CreateArtwork
 {
     public string Title { get; set; }
     public string Description { get; set; }
-    public FileStream[] Pictures { get; set; }
-    public HashtagsGeneral[] Hashtags { get; set; }
+    public IList<IFormFile> Pictures { get; set; }
+    public IList<string> Hashtags { get; set; }
     public OpenTo OpenTo { get; set; }
     public bool AllowComments { get; set; }
     public bool IsOriginalWork { get; set; }
+    public bool IsFeatured { get; set; }
 }

@@ -40,4 +40,15 @@ public class MyArtworksController : Controller
 
         return StatusCode(StatusCodes.Status200OK, myArtwork);
     }
+
+    [HttpPost]
+    [ProducesResponseType(typeof(MyArtworkFull), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<MyArtworkFull>> CreateMyArtwork(
+               [FromForm][Required] CreateArtwork request)
+    {
+        var myArtwork = await myArtworksService.CreateMyArtwork(request);
+
+        return StatusCode(StatusCodes.Status201Created, myArtwork);
+    }
 }
